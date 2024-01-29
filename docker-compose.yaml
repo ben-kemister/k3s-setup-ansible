@@ -1,0 +1,30 @@
+#
+# Description: This docker compose supports the use of the hosts' SSH keys within the ansible container/service.
+#               This is especially helpful on Windows, where the use of ssh-agent forwarding or volumes which do not work
+#               for SSH keys.
+#
+---
+version: '3.3'
+services:
+  ansible:
+    image: pad92/ansible-alpine:latest
+    # Override the default entrypoint of the image so that we can copy the users SSH key and set the permissions
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        echo "Copy hosts' SSH key to container /root/.ssh/id_rsa"
+        mkdir -p /root/.ssh/
+        cp /run/secrets/user_ssh_key /root/.ssh/id_rsa && chmod 400 /root/.ssh/id_rsa
+        echo
+        echo "Running standard 'pad92/ansible-alpine' entrypoint script"
+        /usr/local/bin/entrypoint "$@"
+    secrets:
+      - user_ssh_key
+    volumes:
+      # Use the current directory
+      - .:/ansible
+secrets:
+  user_ssh_key:
+    # The private key to use in ansible
+    file: ~/.ssh/id_rsa
