@@ -1,0 +1,22 @@
+#
+# Description: This is a sample inventory file.
+#
+# Usage: Copy the contents of this file to inventory.yaml and update the values to match your environment/setup.
+#
+---
+k3s_cluster:
+  children:
+    server:
+      hosts:
+        my-raspberry-pi:
+          ansible_user: pi
+        another-server:
+          ansible_user: someone
+    agent:
+      hosts:
+        agent-node:
+
+  # Variables to be used within the ansible playbooks
+  vars:
+    # The URL of the private registry to use, comment out this line to skip
+    private_registry: "https://<YOUR_PRIVATE_IMAGE_REGISTRY>:<PORT>"

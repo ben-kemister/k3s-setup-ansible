@@ -1,0 +1,32 @@
+#
+# This file configures the k3s node to use the private (docker) registries defined below.
+#
+# When pulling an image from a registry, containerd will try the endpoint URLs, plus the default endpoint, and use the first working one
+# For more information see: https://docs.k3s.io/installation/private-registry
+#
+# To apply this configuration:
+#   1. Create the folders /etc/rancher/k3s/ (they don't exist on a clean install)
+#         sudo mkdir -p /etc/rancher/k3s/
+#   2. Add the contents of this file to: /etc/rancher/k3s/registries.yaml
+#         sudo nano /etc/rancher/k3s/registries.yaml
+#   3. In order for the registry changes to take effect, you need to restart K3s on the node.
+#         sudo systemctl restart k3s-agent
+#
+mirrors:
+  docker.io:
+    endpoint:
+      - "{{ private_registry }}"
+      - "https://registry-1.docker.io"
+  quay.io:
+    endpoint:
+      - "{{ private_registry }}"
+      - "https://quay.io"
+  gcr.io:
+    endpoint:
+      - "{{ private_registry }}"
+      - "https://gcr.io"
+  # Replaces the deprecated k8s.gcr.io registry
+  registry.k8s.io:
+    endpoint:
+      - "{{ private_registry }}"
+      - "https://registry.k8s.io"

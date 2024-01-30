@@ -1,0 +1,25 @@
+#
+# Description: This playbook creates the registries.yaml file which configures k3s (containerd) to use
+#               private mirror image registries.
+#
+#               For more information see: https://docs.k3s.io/installation/private-registry
+#
+---
+- name: Setup optional config file
+  hosts: k3s_cluster
+  gather_facts: true
+  become: true
+  tasks:
+    - name: Make config directory
+      ansible.builtin.file:
+        path: "/etc/rancher/k3s"
+        mode: 0755
+        state: directory
+    - name: Copy registries.yaml file
+      when: private_registry is defined
+      ansible.builtin.template:
+        src: "registries.j2"
+        dest: "/etc/rancher/k3s/registries.yaml"
+        owner: root
+        group: root
+        mode: 0644
