@@ -1,0 +1,17 @@
+#
+# Description: This playbook retrieves the K3S_TOKEN from the first server in the inventory.
+#               This is useful when needing to add other nodes to your existing cluster.
+#
+---
+- name: Retrieve K3S_TOKEN from server
+  hosts: server[0]
+  gather_facts: true
+  become: true
+  tasks:
+    - name: Echo token
+      command: /bin/cat /var/lib/rancher/k3s/server/node-token
+      register: token
+
+    - ansible.builtin.debug:
+        msg:
+        - "K3S_TOKEN: {{ token.stdout }}"

@@ -37,12 +37,23 @@ docker-compose -f .\docker-compose.yaml run --rm ansible sh echo Hello World
 There is a test playbook which can be used to check that everything is working as expected.
 
 ```powershell
-docker-compose -f .\docker-compose.yaml run --rm ansible sh ansible-playbook -i inventory.yaml playbook/test.yaml
+docker-compose -f .\docker-compose.yaml run --rm ansible sh `
+ansible-playbook -i inventory.yaml playbook/test.yaml
 ```
 
 ### Private Image registry
 
+To set up k3s nodes to use a private image registry, defined the `private_registry` value in your [inventory.yaml](./inventory.yaml)
+file and then run:
+
 ```powershell
-docker-compose -f .\docker-compose.yaml run --rm ansible sh ansible-playbook -i inventory.yaml --check --diff playbook/private-registry.yaml
+docker-compose -f .\docker-compose.yaml run --rm ansible sh `
+ansible-playbook -i inventory.yaml --diff playbook/private-registry.yaml
 ```
 
+### Retrieve K3S_TOKEN
+
+```powershell
+docker-compose -f .\docker-compose.yaml run --rm ansible sh `
+ansible-playbook -i inventory.yaml --diff playbook/retrieve-token.yaml
+```
