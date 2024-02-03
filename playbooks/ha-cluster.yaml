@@ -1,0 +1,12 @@
+#
+#
+#
+---
+- name: Build a cluster with HA control plane
+  hosts: k3s_cluster
+  vars:
+    k3s_become: true
+    k3s_etcd_datastore: true
+    k3s_use_experimental: true  # Note this is required for 2 members or an even number of members
+  roles:
+    - role: xanmanning.k3s

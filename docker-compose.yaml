@@ -13,17 +13,20 @@ services:
       - /bin/sh
       - -c
       - |
-        echo "Copy hosts' SSH key to container /root/.ssh/id_rsa"
+        echo "Installing Galaxy roles..."
+        ansible-galaxy install xanmanning.k3s
+        echo "Copying hosts' SSH key to container /root/.ssh/id_rsa"
         mkdir -p /root/.ssh/
         cp /run/secrets/user_ssh_key /root/.ssh/id_rsa && chmod 400 /root/.ssh/id_rsa
         echo
-        echo "Running standard 'pad92/ansible-alpine' entrypoint script"
+        echo "Running standard 'pad92/ansible-alpine' entrypoint script..."
         /usr/local/bin/entrypoint "$@"
     secrets:
       - user_ssh_key
     volumes:
       # Use the current directory
       - .:/ansible
+#      - ./k3s-ansible:/ansible
 secrets:
   user_ssh_key:
     # The private key to use in ansible

@@ -2,9 +2,11 @@
 # Description: This playbook retrieves the K3S_TOKEN from the first server in the inventory.
 #               This is useful when needing to add other nodes to your existing cluster.
 #
+# More details: https://docs.k3s.io/cli/token#server
+#
 ---
 - name: Retrieve K3S_TOKEN from server
-  hosts: server[0]
+  hosts: k3s_cluster[0]
   gather_facts: true
   become: true
   tasks:
