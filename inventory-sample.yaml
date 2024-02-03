@@ -13,7 +13,8 @@ k3s_cluster:
       ansible_host: 192.168.0.201
       ansible_user: user
   vars:
-    # Private variable placed here rather than in the playbook
+    k3s_release_version: "v1.28.2+k3s1"
+    # Put your private variable here rather than in the playbook
     k3s_registration_address: 192.168.0.xxx
     k3s_control_token: yourSecretToken
     # Optional if you want to use a private registry

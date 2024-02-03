@@ -11,7 +11,6 @@
       when: inventory_hostname is match ("server.*")
   vars:
     k3s_become: true
-    k3s_release_version: "v1.28.2+k3s1"
     # If you are using the system-upgrade-controller you will need to use hard links rather than symbolic links
     # as the controller will not be able to follow symbolic links.
     k3s_install_hard_links: true
