@@ -5,18 +5,44 @@
 #
 ---
 k3s_cluster:
-  children:
-    server:
-      hosts:
-        my-raspberry-pi:
-          ansible_user: pi
-        another-server:
-          ansible_user: someone
-    agent:
-      hosts:
-        agent-node:
-
-  # Variables to be used within the ansible playbooks
+  hosts:
+    server-0:
+      ansible_host: raspberry-p
+      ansible_user: pi
+    agent-1:
+      ansible_host: 192.168.0.201
+      ansible_user: user
   vars:
-    # The URL of the private registry to use, comment out this line to skip
-    private_registry: "https://<YOUR_PRIVATE_IMAGE_REGISTRY>:<PORT>"
+    # Private variable placed here rather than in the playbook
+    k3s_registration_address: 192.168.0.xxx
+    k3s_control_token: yourSecretToken
+    # Optional if you want to use a private registry
+    k3s_registries: {
+      mirrors: {
+        docker.io: {
+          endpoint: [
+            "https://<YOUR_PRIVATE_IMAGE_REGISTRY>:<PORT>",
+            "https://registry-1.docker.io"
+          ]
+        },
+        quay.io: {
+          endpoint: [
+            "https://<YOUR_PRIVATE_IMAGE_REGISTRY>:<PORT>",
+            "https://quay.io"
+          ]
+        },
+        gcr.io: {
+          endpoint: [
+            "https://<YOUR_PRIVATE_IMAGE_REGISTRY>:<PORT>",
+            "https://gcr.io"
+          ]
+        },
+        # Replaces the deprecated k8s.gcr.io registry
+        registry.k8s.io: {
+          endpoint: [
+            "https://<YOUR_PRIVATE_IMAGE_REGISTRY>:<PORT>",
+            "https://registry.k8s.io"
+          ]
+        }
+      }
+    }

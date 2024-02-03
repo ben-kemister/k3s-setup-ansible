@@ -2,13 +2,17 @@ k3s-setup-ansible
 ----
 This repo contains files to assist with the installation and configuration of k3s on both server and agent nodes.
 
+This project uses:
+* [pad92/ansible-alpine](https://github.com/pad92/docker-ansible-alpine) - Docker image to run ansible
+* [PyratLabs/ansible-role-k3s](https://github.com/PyratLabs/ansible-role-k3s?tab=readme-ov-file) - k3s Ansible role
+
 ## Pre-requisites 
 
 To run the ansible playbooks in this repository you will need:
 
 * Password SSH logins setup with your cluster hosts
 * Docker/Podman used to run the ansible playbooks from within the [pad92/ansible-alpine](https://hub.docker.com/r/pad92/ansible-alpine/) image
-* Access to the internet to use the https://github.com/PyratLabs/ansible-role-k3s?tab=readme-ov-file
+* Access to the internet to use the [ansible-role-k3s](https://github.com/PyratLabs/ansible-role-k3s?tab=readme-ov-file)
 
 ## Setup
 
@@ -52,17 +56,6 @@ docker-compose -f .\docker-compose.yaml run --rm ansible sh `
 ansible-playbook -i inventory.yaml playbooks/test.yaml
 ```
 
-
-### Private Image registry
-
-To set up k3s nodes to use a private image registry, defined the `private_registry` value in your [inventory.yaml](./inventory.yaml)
-file and then run:
-
-```powershell
-docker-compose -f .\docker-compose.yaml run --rm ansible sh `
-ansible-playbook -i inventory.yaml --diff playbooks/private-registry.yaml
-```
-
 ### Retrieve K3S_TOKEN
 
 ```powershell
@@ -78,6 +71,8 @@ ansible-playbook -i inventory.yaml --diff playbooks/retrieve-versions.yaml
 ```
 
 ### HA Setup
+
+This is the main deal and can be used to add/remove nodes from an existing cluster.
 
 ```powershell
 docker-compose -f .\docker-compose.yaml run --rm ansible sh `

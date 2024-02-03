@@ -4,9 +4,20 @@
 ---
 - name: Build a cluster with HA control plane
   hosts: k3s_cluster
+  pre_tasks:
+    - name: Set each server host to be a control node
+      ansible.builtin.set_fact:
+        k3s_control_node: true
+      when: inventory_hostname is match ("server.*")
   vars:
     k3s_become: true
+    k3s_release_version: "v1.28.2+k3s1"
+    # If you are using the system-upgrade-controller you will need to use hard links rather than symbolic links
+    # as the controller will not be able to follow symbolic links.
+    k3s_install_hard_links: true
     k3s_etcd_datastore: true
-    k3s_use_experimental: true  # Note this is required for 2 members or an even number of members
+    k3s_server:
+      disable:
+        - servicelb
   roles:
     - role: xanmanning.k3s
