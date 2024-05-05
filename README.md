@@ -6,6 +6,11 @@ This project uses:
 * [pad92/ansible-alpine](https://github.com/pad92/docker-ansible-alpine) - Docker image to run ansible
 * [PyratLabs/ansible-role-k3s](https://github.com/PyratLabs/ansible-role-k3s?tab=readme-ov-file) - k3s Ansible role
 
+## TODO
+
+1. Create playbook to install nfs-common on the nodes (needed for NFS volumes)
+
+
 ## Pre-requisites 
 
 To run the ansible playbooks in this repository you will need:
@@ -40,6 +45,24 @@ docker-compose -f .\docker-compose.yaml run --rm ansible sh echo Hello World
 
 ## Playbooks
 
+### HA Cluster
+
+This is the main deal and can be used to add/remove nodes from an existing cluster.
+
+```powershell
+docker-compose -f .\docker-compose.yaml run --rm ansible sh `
+ansible-playbook -i inventory.yaml --diff playbooks/ha-cluster.yaml
+```
+
+### Hardened HA Cluster
+
+This is the main deal and can be used to add/remove nodes from an existing cluster.
+
+```powershell
+docker-compose -f .\docker-compose.yaml run --rm ansible sh `
+ansible-playbook -i inventory-new.yaml --diff playbooks/hardened-ha-cluster.yaml
+```
+
 ### Ping
 
 ```powershell
@@ -70,11 +93,9 @@ docker-compose -f .\docker-compose.yaml run --rm ansible sh `
 ansible-playbook -i inventory.yaml --diff playbooks/retrieve-versions.yaml
 ```
 
-### HA Setup
-
-This is the main deal and can be used to add/remove nodes from an existing cluster.
+### Apt Update & Upgrade
 
 ```powershell
 docker-compose -f .\docker-compose.yaml run --rm ansible sh `
-ansible-playbook -i inventory.yaml --diff playbooks/ha-cluster.yaml
+ansible-playbook -i inventory.yaml playbooks/apt-update.yaml
 ```

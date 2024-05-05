@@ -1,0 +1,69 @@
+#
+# Description: Deploys a HA cluster along with the k3s CIS Hardening recommendations
+#
+# See:
+#  - https://docs.k3s.io/security/secrets-encryption
+#  - https://docs.k3s.io/security/hardening-guide
+#
+---
+- name: Build a hardened cluster with HA control plane
+  hosts: k3s_cluster
+  pre_tasks:
+    - name: Host-level hardening
+      ansible.builtin.include_tasks: node_hardening.yaml
+
+    - name: Set each 'server' host to be a control node
+      ansible.builtin.set_fact:
+        k3s_control_node: true
+      when: inventory_hostname is match ("server.*")
+    - name: Ensure that the k3s/server directory exists on every control node
+      ansible.builtin.file:
+        state: directory
+        path: "{{ k3s_server_dir }}"
+        mode: 0755
+      when:
+        - k3s_control_node
+        - k3s_server_files | length > 0
+      become: "{{ k3s_become }}"
+    - name: Ensure server files are copied to control nodes
+      ansible.builtin.template:
+        src: "{{ item }}"
+        dest: "{{ k3s_server_dir }}/{{ item | basename | replace('.j2', '') }}"
+        mode: 0644
+      loop: "{{ k3s_server_files }}"
+      become: "{{ k3s_become }}"
+      when:
+        - k3s_control_node
+        - k3s_server_files | length > 0
+  vars:
+    k3s_become: true
+    # If you are using the system-upgrade-controller you will need to use hard links rather than symbolic links
+    # as the controller will not be able to follow symbolic links.
+    k3s_install_hard_links: true
+    k3s_etcd_datastore: true
+    k3s_server:
+      # This is a kubelet flag that will cause the kubelet to exit if the required kernel parameters are unset or are set to values that are different from the kubelet's defaults.
+      protect-kernel-defaults: true
+      # Enable Secret encryption at rest. See: https://docs.k3s.io/security/secrets-encryption
+      secrets-encryption: true
+      # Enable Pod Security Admissions (PSAs) for controlling pod security.
+      kube-apiserver-arg: "admission-control-config-file=/var/lib/rancher/k3s/server/psa.yaml"
+      disable:
+        - servicelb
+    # Default location of the k3s/server directory
+    k3s_server_dir: "/var/lib/rancher/k3s/server"
+    # Additional files to copy to server node(s)
+    k3s_server_files:
+      # Pod Security Admissions (PSAs) for controlling pod security.
+      - "/ansible/server/psa.yaml"
+    # Copied to /var/lib/rancher/k3s/server/manifests on the server
+    k3s_server_manifests_templates:
+      - "/ansible/manifests/kube-system-networkpolicy.yaml"
+      - "/ansible/manifests/default-networkpolicy.yaml"
+
+    k3s_agent:
+      # This is a kubelet flag that will cause the kubelet to exit if the required kernel parameters are unset or are set to values that are different from the kubelet's defaults.
+      protect-kernel-defaults: true
+
+  roles:
+    - role: xanmanning.k3s

@@ -1,0 +1,25 @@
+#
+# Description: Contains the tasks to harden the node
+#
+# See: https://docs.k3s.io/security/hardening-guide#host-level-requirements
+#
+---
+#
+# See: https://docs.k3s.io/security/hardening-guide#set-kernel-parameters
+#
+- name: Create kubelet sysctl.d config file (90-kubelet.conf)
+  vars:
+    conf: |
+      vm.panic_on_oom=0
+      vm.overcommit_memory=1
+      kernel.panic=10
+      kernel.panic_on_oops=1
+  ansible.builtin.copy:
+    content: "{{ conf }}"
+    dest: /etc/sysctl.d/90-kubelet.conf
+  become: "{{ k3s_become }}"
+
+- name: Load kubelet sysctl.d config file (90-kubelet.conf)
+  ansible.builtin.command:
+    cmd: "sysctl -p /etc/sysctl.d/90-kubelet.conf"
+  become: "{{ k3s_become }}"

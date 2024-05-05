@@ -1,5 +1,7 @@
 # Ignore Intellij files and folders
 /.idea/
 
-# Ignore the real inventory
+# Ignore the real inventory files
 /inventory.yaml
+/inventory-new.yaml
+/inventory-old.yaml
