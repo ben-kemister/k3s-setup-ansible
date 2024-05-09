@@ -1,7 +1,10 @@
 #
 # This policy should be written to a file named psa.yaml in /var/lib/rancher/k3s/server directory.
 #
-# See: https://docs.k3s.io/security/hardening-guide#pod-security
+# See:
+#   - https://docs.k3s.io/security/hardening-guide#pod-security
+#   - https://kubernetes.io/docs/concepts/security/pod-security-admission/#pod-security-levels
+#   - https://kubernetes.io/docs/concepts/security/pod-security-standards/
 #
 ---
 apiVersion: apiserver.config.k8s.io/v1
@@ -14,6 +17,7 @@ plugins:
       defaults:
         # CIS Recommendation: "restricted"
         # enforce: "restricted"
+        # Restricted - Heavily restricted policy, following current Pod hardening best practices.
         # Baseline - Minimally restrictive policy which prevents known privilege escalations. Allows the default (minimally specified) Pod configuration.
         enforce: "baseline"
         enforce-version: "latest"
