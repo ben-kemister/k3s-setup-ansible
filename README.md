@@ -99,3 +99,10 @@ ansible-playbook -i inventory.yaml --diff playbooks/retrieve-versions.yaml
 docker-compose -f .\docker-compose.yaml run --rm ansible sh `
 ansible-playbook -i inventory.yaml playbooks/apt-update.yaml
 ```
+
+### Restart k3s service
+
+```powershell
+docker-compose -f .\docker-compose.yaml run --rm ansible sh `
+ansible-playbook -i inventory-new.yaml playbooks/restart-k3s.yaml
+```
