@@ -11,7 +11,7 @@
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
-  name: allow-kube-system-ingress
+  name: default-deny-intra-namespace
   namespace: default
 spec:
   podSelector: {}
