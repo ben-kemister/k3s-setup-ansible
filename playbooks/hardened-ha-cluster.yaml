@@ -24,19 +24,17 @@
       when:
         - k3s_control_node is defined
         - k3s_control_node
-        - k3s_server_files | length > 0
       become: "{{ k3s_become }}"
-    - name: Ensure server files are copied to control nodes
+    - name: Set AdmissionConfiguration (PodSecurity) on control nodes
       ansible.builtin.template:
-        src: "{{ item }}"
-        dest: "{{ k3s_server_dir }}/{{ item | basename | replace('.j2', '') }}"
+        src: psa.yaml.j2
+        dest: "{{ k3s_server_dir }}/psa.yaml"
         mode: 0644
-      loop: "{{ k3s_server_files }}"
       become: "{{ k3s_become }}"
       when:
         - k3s_control_node is defined
         - k3s_control_node
-        - k3s_server_files | length > 0
+
   vars:
     k3s_become: true
     # If you are using the system-upgrade-controller you will need to use hard links rather than symbolic links
@@ -49,15 +47,10 @@
       # Enable Secret encryption at rest. See: https://docs.k3s.io/security/secrets-encryption
       secrets-encryption: true
       # Enable Pod Security Admissions (PSAs) for controlling pod security.
-      kube-apiserver-arg: "admission-control-config-file=/var/lib/rancher/k3s/server/psa.yaml"
+      kube-apiserver-arg: "admission-control-config-file={{ k3s_server_dir }}/psa.yaml"
       disable:
         - servicelb
-    # Default location of the k3s/server directory
-    k3s_server_dir: "/var/lib/rancher/k3s/server"
-    # Additional files to copy to server node(s)
-    k3s_server_files:
-      # Pod Security Admissions (PSAs) for controlling pod security.
-      - "/ansible/server/psa.yaml"
+
     # Copied to /var/lib/rancher/k3s/server/manifests on the server
     k3s_server_manifests_templates:
       - "/ansible/manifests/kube-system-networkpolicy.yaml"

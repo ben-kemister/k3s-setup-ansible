@@ -60,7 +60,7 @@ This is the main deal and can be used to add/remove nodes from an existing clust
 
 ```powershell
 docker-compose -f .\docker-compose.yaml run --rm ansible sh `
-ansible-playbook -i inventory-new.yaml --diff playbooks/hardened-ha-cluster.yaml
+ansible-playbook -i inventory.yaml --diff playbooks/hardened-ha-cluster.yaml
 ```
 
 ### Ping
@@ -104,5 +104,8 @@ ansible-playbook -i inventory.yaml playbooks/apt-update.yaml
 
 ```powershell
 docker-compose -f .\docker-compose.yaml run --rm ansible sh `
-ansible-playbook -i inventory-new.yaml playbooks/restart-k3s.yaml
+ansible-playbook -i inventory.yaml playbooks/restart-k3s.yaml
 ```
+
+## Development
+

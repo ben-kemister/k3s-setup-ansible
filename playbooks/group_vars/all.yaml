@@ -1,0 +1,5 @@
+
+# Default location of the k3s/server directory
+k3s_server_dir: "/var/lib/rancher/k3s/server"
+
+

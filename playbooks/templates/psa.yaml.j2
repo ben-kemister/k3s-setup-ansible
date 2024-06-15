@@ -18,20 +18,24 @@ plugins:
       kind: PodSecurityConfiguration
       defaults:
         # CIS Recommendation: "restricted"
-        # enforce: "restricted"
-        # Restricted - Heavily restricted policy, following current Pod hardening best practices.
-        # Baseline - Minimally restrictive policy which prevents known privilege escalations. Allows the default (minimally specified) Pod configuration.
-        enforce: "baseline"
+        enforce: "{{ pod_security_configuration_defaults_enforce | default('restricted') }}"
         enforce-version: "latest"
         audit: "restricted"
         audit-version: "latest"
         warn: "restricted"
         warn-version: "latest"
+
       exemptions:
         usernames: []
         runtimeClasses: []
         namespaces:
-         # The Kubernetes critical additions such as CNI, DNS, and Ingress are run as pods in the kube-system namespace.
-         # Therefore, this namespace will have a policy that is less restrictive so that these components can run properly.
-         - kube-system
-         - cis-operator-system
+          # The Kubernetes critical additions such as CNI, DNS, and Ingress are run as pods in the kube-system namespace.
+          # Therefore, this namespace will have a policy that is less restrictive so that these components can run properly.
+          - kube-system
+          - cis-operator-system
+    {% if pod_security_configuration_exemptions_namespaces is defined %}
+      # Additional namespace exceptions
+    {% for namespace in pod_security_configuration_exemptions_namespaces %}
+      - {{ namespace }}
+    {% endfor %}
+    {% endif %}
